@@ -4,6 +4,12 @@ All notable public changes to Team Rental Desk are documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and public versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Fixed
+
+- Restored the per-space shortcut action. A working binding opens directly; a missing or stale binding now leads to shortcut management.
+
 ## [1.0.0] - 2026-08-10
 
 ### Added
@@ -25,4 +31,4 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Rebuilt the application around TypeScript, Electron, React, and SQLite.
 - Reworked the data model, billing logic, historical snapshots, archive behavior, UI, backup flow, reminder flow, security boundary, tests, documentation, and branding.
 
-[1.0.0]: https://github.com/wx2529496539-arch/team-rental-desk/releases/tag/v1.0.0
+[1.0.0]: https://github.com/feibi-mochi/team-rental-desk/releases/tag/v1.0.0

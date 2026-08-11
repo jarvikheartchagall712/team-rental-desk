@@ -15,7 +15,7 @@ Security fixes are provided for the latest public release line.
 
 Please use GitHub's private vulnerability reporting page:
 
-<https://github.com/wx2529496539-arch/team-rental-desk/security/advisories/new>
+<https://github.com/feibi-mochi/team-rental-desk/security/advisories/new>
 
 请使用上面的 GitHub 私密漏洞报告入口，不要在公开 Issue、Pull Request、Discussion 或截图中披露漏洞细节、真实数据库、密码、SMTP 凭据或客户资料。
 

@@ -120,7 +120,7 @@ export function App() {
   const page = (() => {
     switch (section) {
       case "dashboard": return <DashboardPage refreshToken={refreshToken} onChanged={changed} onError={setError} onNotice={setNotice} onNavigate={navigate} onOpenSpace={openSpace} />;
-      case "spaces": return <SpacesPage {...common} focusedSpaceId={focusedSpaceId} />;
+      case "spaces": return <SpacesPage {...common} focusedSpaceId={focusedSpaceId} onNotice={setNotice} onManageShortcuts={() => navigate("shortcuts")} />;
       case "archived_spaces": return <ArchivedSpacesPage {...common} />;
       case "archived_children": return <ArchivedChildrenPage {...common} />;
       case "transactions": return <TransactionsPage {...common} onNotice={setNotice} />;

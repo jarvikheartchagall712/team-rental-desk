@@ -230,9 +230,9 @@ h2, h3, p { word-break: break-word; }
 .space-table .space-col-owner { width: 18%; }
 .space-table .space-col-country { width: 9%; }
 .space-table .space-col-method { width: 10%; }
-.space-table .space-col-cost { width: 21%; }
-.space-table .space-col-due { width: 15%; }
-.space-table .space-col-actions { width: 13%; }
+.space-table .space-col-cost { width: 19%; }
+.space-table .space-col-due { width: 14%; }
+.space-table .space-col-actions { width: 16%; }
 .space-table colgroup { display: none; }
 .space-table thead { position: sticky; z-index: 8; top: 0; display: table; width: 100%; overflow: hidden; table-layout: fixed; border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 4px 12px rgba(31, 47, 42, .08); }
 .space-table thead th { height: 48px; padding: 11px 10px; color: #53615c; background: #f5f8f6; font-size: 12px; font-weight: 700; text-align: center; white-space: nowrap; }
@@ -240,9 +240,9 @@ h2, h3, p { word-break: break-word; }
 .space-table thead th:nth-child(2), .space-table-group .space-table-main-row td:nth-child(2) { width: 18%; }
 .space-table thead th:nth-child(3), .space-table-group .space-table-main-row td:nth-child(3) { width: 9%; }
 .space-table thead th:nth-child(4), .space-table-group .space-table-main-row td:nth-child(4) { width: 10%; }
-.space-table thead th:nth-child(5), .space-table-group .space-table-main-row td:nth-child(5) { width: 21%; }
-.space-table thead th:nth-child(6), .space-table-group .space-table-main-row td:nth-child(6) { width: 15%; }
-.space-table thead th:nth-child(7), .space-table-group .space-table-main-row td:nth-child(7) { width: 13%; }
+.space-table thead th:nth-child(5), .space-table-group .space-table-main-row td:nth-child(5) { width: 19%; }
+.space-table thead th:nth-child(6), .space-table-group .space-table-main-row td:nth-child(6) { width: 14%; }
+.space-table thead th:nth-child(7), .space-table-group .space-table-main-row td:nth-child(7) { width: 16%; }
 .space-table-group { display: table; width: 100%; margin-top: 12px; overflow: hidden; table-layout: fixed; border: 1px solid var(--border); border-radius: 14px; background: #fff; box-shadow: 0 5px 18px rgba(31, 47, 42, .035); scroll-margin: 26px; }
 .space-table-group.focused .space-table-main-row td, .space-table-group.focused .space-table-child-row td { background: color-mix(in srgb, var(--accent-soft) 54%, #fff); animation: focus-table-space 1.1s ease-out; }
 @keyframes focus-table-space { from { background: color-mix(in srgb, var(--accent) 22%, #fff); } to { background: color-mix(in srgb, var(--accent-soft) 54%, #fff); } }

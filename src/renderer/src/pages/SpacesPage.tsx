@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 import {
   Archive,
   BadgeDollarSign,
+  ExternalLink,
   Pencil,
   Plus,
   RefreshCw,
@@ -10,6 +11,7 @@ import type {
   ChildSeatInput,
   ChildSeatView,
   CurrencyView,
+  LocalShortcutView,
   PaymentMethodView,
   SpaceInput,
   SpaceListItem,
@@ -50,6 +52,16 @@ function usdtReference(usdMinor: number | null, currency?: CurrencyView): string
   if (!Number.isFinite(units) || units <= 0) return null;
   const minor = Math.round((usdMinor / 100) * units * 10 ** currency.decimalPlaces);
   return formatMoney(minor, "USDT", currency.decimalPlaces);
+}
+
+export function preferredShortcutsBySpace(shortcuts: LocalShortcutView[]): Map<string, LocalShortcutView> {
+  const result = new Map<string, LocalShortcutView>();
+  for (const shortcut of shortcuts) {
+    if (!shortcut.spaceId) continue;
+    const current = result.get(shortcut.spaceId);
+    if (!current || (!current.available && shortcut.available)) result.set(shortcut.spaceId, shortcut);
+  }
+  return result;
 }
 
 type SpaceFormState = {
@@ -203,11 +215,11 @@ function ChildForm(props: { space: SpaceListItem; child: ChildSeatView | null; p
   </Modal>;
 }
 
-export function SpacesPage(props: { refreshToken: number; onChanged: () => void; onError: (message: string) => void; focusedSpaceId?: string | null }) {
-  const [spaces, setSpaces] = useState<SpaceListItem[]>([]); const [methods, setMethods] = useState<PaymentMethodView[]>([]); const [currencies, setCurrencies] = useState<CurrencyView[]>([]);
+export function SpacesPage(props: { refreshToken: number; onChanged: () => void; onError: (message: string) => void; onNotice: (message: string) => void; onManageShortcuts: () => void; focusedSpaceId?: string | null }) {
+  const [spaces, setSpaces] = useState<SpaceListItem[]>([]); const [methods, setMethods] = useState<PaymentMethodView[]>([]); const [currencies, setCurrencies] = useState<CurrencyView[]>([]); const [shortcuts, setShortcuts] = useState<LocalShortcutView[]>([]);
   const [spaceForm, setSpaceForm] = useState<SpaceListItem | "new" | null>(null); const [childForm, setChildForm] = useState<{ space: SpaceListItem; child: ChildSeatView | null; positionNumber?: number } | null>(null);
   const [receipt, setReceipt] = useState<ChildSeatView | null>(null); const [renewal, setRenewal] = useState<SpaceListItem | null>(null); const [confirm, setConfirm] = useState<{ kind: "space" | "child"; id: string; label: string } | null>(null); const [busy, setBusy] = useState(false);
-  const load = async () => { try { const [spaceRows, methodRows, currencyRows] = await Promise.all([window.teamRental.listSpaces(), window.teamRental.listPaymentMethods(true), window.teamRental.listCurrencies()]); setSpaces(spaceRows); setMethods(methodRows); setCurrencies(currencyRows); } catch (error) { props.onError(errorMessage(error)); } };
+  const load = async () => { try { const [spaceRows, methodRows, currencyRows, shortcutRows] = await Promise.all([window.teamRental.listSpaces(), window.teamRental.listPaymentMethods(true), window.teamRental.listCurrencies(), window.teamRental.listShortcuts()]); setSpaces(spaceRows); setMethods(methodRows); setCurrencies(currencyRows); setShortcuts(shortcutRows); } catch (error) { props.onError(errorMessage(error)); } };
   useEffect(() => { void load(); }, [props.refreshToken]);
   useEffect(() => {
     if (!props.focusedSpaceId || spaces.length === 0) return;
@@ -218,7 +230,16 @@ export function SpacesPage(props: { refreshToken: number; onChanged: () => void;
   }, [props.focusedSpaceId, spaces]);
   const changed = () => { void load(); props.onChanged(); };
   const currencyMap = useMemo(() => new Map(currencies.map((item) => [item.code, item])), [currencies]);
+  const shortcutBySpace = useMemo(() => preferredShortcutsBySpace(shortcuts), [shortcuts]);
   const archive = async () => { if (!confirm) return; setBusy(true); try { if (confirm.kind === "space") await window.teamRental.archiveSpace(confirm.id); else await window.teamRental.archiveChildSeat(confirm.id); setConfirm(null); changed(); } catch (error) { props.onError(errorMessage(error)); } finally { setBusy(false); } };
+  const openShortcut = async (shortcut: LocalShortcutView) => {
+    try {
+      await window.teamRental.openShortcut(shortcut.id);
+      props.onNotice(`已打开 ${shortcut.label}。`);
+    } catch (error) {
+      props.onError(errorMessage(error));
+    }
+  };
   return <>
     <section className="section-heading"><div><h2>空间与子位置</h2><p>每个母账号、出租位置、账期、收费和支付渠道都在同一处查看。</p></div><button className="button primary" onClick={() => setSpaceForm("new")}><Plus size={17} />新增空间</button></section>
     {spaces.length === 0 ? <section className="empty-card">还没有正在使用的空间。可以新增空间，或到“已归档空间”恢复。</section> : <div className="space-table-shell active-space-table-shell"><table className="space-table">
@@ -231,6 +252,7 @@ export function SpacesPage(props: { refreshToken: number; onChanged: () => void;
           .slice(0, Math.max(0, 2 - children.length));
         const defaultMethod = space.paymentMethods.find((method) => method.isDefault) ?? space.paymentMethods[0];
         const usdt = usdtReference(space.sourceCostUsdMinor, currencyMap.get("USDT"));
+        const shortcut = shortcutBySpace.get(space.id);
         return <tbody id={`space-card-${space.id}`} className={space.id === props.focusedSpaceId ? "space-table-group focused" : "space-table-group"} key={space.id}>
           <tr className="space-table-main-row">
             <td><div className="space-table-name"><strong>{space.displayName}</strong><span className={`service-badge ${space.serviceKind}`}>{space.serviceKind === "codex" ? "Codex" : "ChatGPT"}</span></div></td>
@@ -239,7 +261,17 @@ export function SpacesPage(props: { refreshToken: number; onChanged: () => void;
             <td title={defaultMethod?.name}>{defaultMethod?.name ?? "未设置"}</td>
             <td><div className="space-table-cost"><strong>{formatMoney(space.sourceCost.minor, space.sourceCost.currency, currencyMap.get(space.sourceCost.currency)?.decimalPlaces)}</strong><small>{space.sourceCostUsdMinor === null ? "尚未冻结 USD" : `${formatMoney(space.sourceCostUsdMinor,"USD")} · ${formatMoney(space.sourceCostCnyMinor ?? 0,"CNY")}${usdt ? ` · ${usdt}` : ""}`}</small></div></td>
             <td><div className="space-table-due"><span>{space.renewsOn}</span><span className={`status-badge ${space.expiryStatus}`}>{expiryLabels[space.expiryStatus]}</span></div></td>
-            <td><div className="space-table-actions"><button className="icon-button" title="续费" aria-label={`续费空间 ${space.displayName}`} onClick={() => setRenewal(space)}><RefreshCw size={17} /></button><button className="icon-button" title="编辑" aria-label={`编辑空间 ${space.displayName}`} onClick={() => setSpaceForm(space)}><Pencil size={17} /></button><button className="icon-button danger-text" title="归档" aria-label={`归档空间 ${space.displayName}`} onClick={() => setConfirm({kind:"space",id:space.id,label:space.displayName})}><Archive size={17} /></button></div></td>
+            <td><div className="space-table-actions">
+              <button
+                className={`icon-button${shortcut?.available ? " success" : ""}`}
+                title={shortcut?.available ? `打开快捷方式：${shortcut.label}` : shortcut ? "快捷方式文件已失效，前往重新绑定" : "未绑定快捷方式，前往绑定"}
+                aria-label={shortcut?.available ? `打开 ${space.displayName} 的快捷方式` : shortcut ? `修复 ${space.displayName} 的快捷方式` : `给 ${space.displayName} 绑定快捷方式`}
+                onClick={() => shortcut?.available ? void openShortcut(shortcut) : props.onManageShortcuts()}
+              ><ExternalLink size={17} /></button>
+              <button className="icon-button" title="续费" aria-label={`续费空间 ${space.displayName}`} onClick={() => setRenewal(space)}><RefreshCw size={17} /></button>
+              <button className="icon-button" title="编辑" aria-label={`编辑空间 ${space.displayName}`} onClick={() => setSpaceForm(space)}><Pencil size={17} /></button>
+              <button className="icon-button danger-text" title="归档" aria-label={`归档空间 ${space.displayName}`} onClick={() => setConfirm({kind:"space",id:space.id,label:space.displayName})}><Archive size={17} /></button>
+            </div></td>
           </tr>
           <tr className="space-table-child-row"><td colSpan={7}><div className="child-grid">{children.map((child) => <div className="child-row" key={child.id}>
             <div className="position">位置 {child.positionNumber}</div><div className="child-login"><strong>{child.customerLogin}</strong><small>{child.contact || "未填写联系方式"}</small></div><div className="charge"><span className={child.charge.minor >= 100 * 10 ** (currencyMap.get(child.charge.currency)?.decimalPlaces ?? 2) ? "amount-pill yellow" : "amount-pill blue"}>{child.usageKind === "self_use" ? "自用" : formatMoney(child.charge.minor, child.charge.currency, currencyMap.get(child.charge.currency)?.decimalPlaces)}</span></div><div className="child-date"><span>{child.nextPaymentOn}</span><small>{child.cycleMonths === 1 ? `每月 ${child.paymentDay} 日` : `每 ${child.cycleMonths} 个月 · ${child.paymentDay} 日`}</small></div><div className="child-status"><span className={`status-badge ${child.expiryStatus}`}>{expiryLabels[child.expiryStatus]}</span>{child.collectionStatus !== "none" ? <span className={`collection-badge ${child.collectionStatus}`}>{collectionLabels[child.collectionStatus]}</span> : null}</div><div className="action-row">{child.usageKind === "rental" && child.collectionStatus !== "none" ? <button className="icon-button success" title="记录收款" aria-label={`记录 ${child.customerLogin} 的收款`} onClick={() => setReceipt(child)}><BadgeDollarSign size={17} /></button> : null}<button className="icon-button" title="编辑" aria-label={`编辑子位置 ${child.customerLogin}`} onClick={() => setChildForm({space,child})}><Pencil size={17} /></button><button className="icon-button danger-text" title="归档" aria-label={`归档子位置 ${child.customerLogin}`} onClick={() => setConfirm({kind:"child",id:child.id,label:`${space.displayName} 位置 ${child.positionNumber}`})}><Archive size={17} /></button></div>

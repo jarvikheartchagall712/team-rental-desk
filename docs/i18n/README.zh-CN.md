@@ -44,7 +44,7 @@ Team Rental Desk 是一款本地优先的 Windows 桌面工具。它用于管理
 
 ## 下载
 
-请从 [GitHub Releases](https://github.com/wx2529496539-arch/team-rental-desk/releases/latest) 同时下载当前安装包和 `SHA256SUMS.txt`。
+请从 [GitHub Releases](https://github.com/feibi-mochi/team-rental-desk/releases/latest) 同时下载当前安装包和 `SHA256SUMS.txt`。
 
 正式支持范围：
 

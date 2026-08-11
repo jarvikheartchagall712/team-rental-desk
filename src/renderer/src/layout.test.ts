@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import type { SpaceListItem } from "../../shared/contracts";
 import { availableSpaces } from "./pages/ArchivedChildrenPage";
+import { preferredShortcutsBySpace } from "./pages/SpacesPage";
 
 const app = readFileSync(new URL("./App.tsx", import.meta.url), "utf8");
 const spacesPage = readFileSync(new URL("./pages/SpacesPage.tsx", import.meta.url), "utf8");
@@ -113,6 +114,20 @@ describe("space form and table layout", () => {
     expect(spacesPage).toContain("function usdtReference");
     expect(spacesPage).toContain("currency.unitsPerUsd");
     expect(spacesPage).not.toContain("space.sourceCostUsdMinor/100");
+  });
+
+  it("shows a shortcut action for every space and prefers a working binding", () => {
+    const selected = preferredShortcutsBySpace([
+      { id: "stale", label: "旧文件", targetPath: "C:\\missing.lnk", spaceId: "space-1", available: false },
+      { id: "working", label: "打开母号", targetPath: "C:\\working.lnk", spaceId: "space-1", available: true },
+      { id: "unbound", label: "未关联", targetPath: "C:\\other.lnk", spaceId: null, available: true },
+    ]);
+    expect(selected.get("space-1")?.id).toBe("working");
+    expect(selected.has("unbound")).toBe(false);
+    expect(spacesPage).toContain("window.teamRental.listShortcuts()");
+    expect(spacesPage).toContain("未绑定快捷方式，前往绑定");
+    expect(spacesPage).toContain("快捷方式文件已失效，前往重新绑定");
+    expect(spacesPage).toContain("window.teamRental.openShortcut(shortcut.id)");
   });
 
   it("reflows dashboard work rows by their real card width", () => {

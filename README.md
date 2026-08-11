@@ -9,7 +9,7 @@
   <img alt="Version 1.0.0" src="https://img.shields.io/badge/version-1.0.0-5965d8">
   <img alt="Windows 10 and 11 x64" src="https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-0078d4">
   <img alt="Apache License 2.0" src="https://img.shields.io/badge/code%20license-Apache--2.0-3b7a57">
-  <a href="https://github.com/wx2529496539-arch/team-rental-desk/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/wx2529496539-arch/team-rental-desk/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://github.com/feibi-mochi/team-rental-desk/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/feibi-mochi/team-rental-desk/actions/workflows/ci.yml/badge.svg"></a>
 </p>
 
 Team Rental Desk is a local-first Windows desktop app for managing shared ChatGPT and Codex spaces, rented seats, payments, renewals, costs, currencies, shortcuts, backups, and reminders. It automatically detects the independent Chrome profiles configured on the computer; choose one and it creates a Windows shortcut that always opens that profile and the specified Team management page. When the selected profile is already signed in, the shortcut can open the matching account environment without repeatedly entering credentials. Team Rental Desk does not store, read, or bypass service passwords. The app UI is currently in Simplified Chinese. Thanks to the original author of [Userchenentao5/team-account-manager](https://github.com/Userchenentao5/team-account-manager) for sharing the project; Team Rental Desk has since been substantially rebuilt.
@@ -45,7 +45,7 @@ Team Rental Desk is a local-first Windows desktop app for managing shared ChatGP
 
 ## Download
 
-Download the current installer and `SHA256SUMS.txt` from [GitHub Releases](https://github.com/wx2529496539-arch/team-rental-desk/releases/latest).
+Download the current installer and `SHA256SUMS.txt` from [GitHub Releases](https://github.com/feibi-mochi/team-rental-desk/releases/latest).
 
 Officially supported release:
 
